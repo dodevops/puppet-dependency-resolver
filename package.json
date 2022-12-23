@@ -1,0 +1,56 @@
+{
+    "name": "puppetfile_dependency_resolver",
+    "version": "0.1.0",
+    "description": "Find fitting dependency modules for modules defined in a Puppetfile",
+    "main": "main.js",
+    "scripts": {
+        "prepare": "eslint . && tsc",
+        "test": "jest"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:dodevops/puppet-dependency-resolver.git"
+    },
+    "keywords": [
+        "puppetfile",
+        "dependency",
+        "resolve"
+    ],
+    "author": "DoDevOps project <info@dodevops.io>",
+    "license": "MIT",
+    "dependencies": {
+        "axios": "^0.21.1",
+        "clime": "^0.5.1",
+        "debug": "^4.3.2",
+        "line-reader": "^0.4.0",
+        "semver": "^7.3.5",
+        "simple-git": "^2.40.0",
+        "theredoc": "^1.0.0",
+        "tmp-promise": "^3.0.2",
+        "winston": "^3.3.3",
+        "graphology": "^0.23.2",
+        "loglevel": "^1.8.0",
+        "loglevel-format": "^1.1.2",
+        "handlebars": "^4.7.7",
+        "flatted": "^3.2.4"
+    },
+    "devDependencies": {
+        "@types/debug": "^4.1.7",
+        "@types/node": "^16.0.0",
+        "typescript": "^4.3.5",
+        "@types/semver": "^7.3.8",
+        "jest": "^27.4.0",
+        "@alex_neo/jest-expect-message": "^1.0.5",
+        "@types/jest": "^27.0.3",
+        "ts-jest": "^27.1.1",
+        "eslint": "^8.4.1",
+        "@typescript-eslint/parser": "^5.7.0",
+        "@typescript-eslint/eslint-plugin": "^5.7.0",
+        "prettier": "^2.5.1",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-prettier": "^4.0.0",
+        "stubborn-ws": "^5.5.0",
+        "eslint-plugin-jsdoc": "^37.4.2",
+        "graphology-types": "^0.24.3"
+    }
+}
