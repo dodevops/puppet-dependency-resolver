@@ -11,7 +11,7 @@ export class DependencyGraph {
   /**
    * The dependency graph singleton
    */
-  private static _dependencyGraph: DependencyGraph
+  private static _dependencyGraph?: DependencyGraph
 
   /**
    * The used graph
@@ -37,6 +37,13 @@ export class DependencyGraph {
       this._dependencyGraph = new DependencyGraph()
     }
     return this._dependencyGraph
+  }
+
+  /**
+   * Clears the dependency graph - used in tests
+   */
+  public static clearGraph() {
+    this._dependencyGraph = undefined
   }
 
   /**

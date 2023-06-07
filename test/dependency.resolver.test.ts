@@ -6,6 +6,8 @@ import path from 'path'
 import { PuppetFile } from '../lib/PuppetFile'
 import { DependencyResolver } from '../lib/DependencyResolver'
 import { expect } from '@jest/globals'
+import { DependencyGraph } from '../lib/DependencyGraph'
+import { ForgeCache } from '../lib/ForgeCache'
 
 jest.setTimeout(999999999)
 const sb = new Stubborn()
@@ -22,6 +24,9 @@ afterAll(async () => {
 
 describe('The dependency resolver', function () {
   beforeEach(async () => {
+    DependencyGraph.clearGraph()
+    ForgeCache.clearCache()
+
     sb.get('/v3/releases/test-default-1.2.3').setResponseBody({
       slug: 'test-default',
       metadata: {
@@ -271,5 +276,35 @@ mod 'test-deprecated', '1.2.3'
         .withIgnoreList(['test-deprecated'])
         .resolve()
     ).resolves.toBeInstanceOf(PuppetFile)
+  })
+
+  it('should throw on a wrong dependency of a module that is included as a dependency', async () => {
+    const subject = await new DependencyResolver().withPuppetFile(
+      await new PuppetFile().fromText(`
+forge 'http://localhost:${sb.getPort()}'
+
+mod 'test-wrongdepa', '1.2.3'
+mod 'test-wrongdepc', '1.2.3'
+    `)
+    )
+
+    await expect(subject.resolve()).rejects.toMatchObject({
+      message: 'No possible version for requirement test-wrongdepc: >=1.2.3',
+    })
+  })
+
+  it('should not throw on a wrong dependency of a module that is included as a dependency but ignored', async () => {
+    const subject = await new DependencyResolver()
+      .withPuppetFile(
+        await new PuppetFile().fromText(`
+forge 'http://localhost:${sb.getPort()}'
+
+mod 'test-wrongdepa', '1.2.3'
+mod 'test-wrongdepc', '1.2.3'
+    `)
+      )
+      .withIgnoreList(['test-wrongdepc'])
+
+    await expect(subject.resolve()).resolves.toBeInstanceOf(PuppetFile)
   })
 })

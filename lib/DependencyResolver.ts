@@ -223,7 +223,7 @@ export class DependencyResolver {
       for (const dependency of (await targetModule.getDependencies()) ?? []) {
         if (dependency.isValid() && dependency.targetModule && dependency.dependencyRange) {
           this._log.debug(`Adding dependency ${dependency.getDescription()}`)
-          if (graph.graph.hasNode(dependency.targetModule.getSlug())) {
+          if (graph.graph.hasNode(dependency.targetModule.getSlug()) && graph.isValid(dependency.targetModule)) {
             const existingModule = graph.graph.getNodeAttribute(
               dependency.targetModule.getSlug(),
               'module'
@@ -245,6 +245,11 @@ export class DependencyResolver {
                 .withTargetModule(dependency.targetModule)
                 .withDependencyRange(dependency.dependencyRange)
             )
+          } else if (
+            this._store.hasPuppetfileRequirementWithTargetModule(dependency.targetModule.getSlug()) &&
+            !this._ignoreList.some((slug) => slug === dependency.targetModule?.getSlug())
+          ) {
+            throw new NoVersionFoundError(`${dependency.targetModule.getSlug()}: ${dependency.dependencyRange}`)
           }
         }
       }

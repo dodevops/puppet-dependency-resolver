@@ -52,6 +52,13 @@ export class ForgeCache {
   }
 
   /**
+   * Clear the forge cache (used in tests)
+   */
+  public static clearCache() {
+    this._cache = undefined
+  }
+
+  /**
    * Set the value for _forgeUrl and return yourself
    *
    * @param value The value to set
