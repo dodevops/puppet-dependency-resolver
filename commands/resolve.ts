@@ -59,6 +59,13 @@ export class ResolveOptions extends Options {
     type: String,
   })
   public preambleFile = ''
+
+  @option({
+    flag: 'e',
+    description: 'Path of file to dump the database into if an error occurs.',
+    default: 'errorDump.js',
+  })
+  public errorDumpPath = ''
 }
 
 /**
@@ -117,10 +124,10 @@ export default class extends Command {
       return newPuppetFile.toText()
     } catch (e) {
       log.error(
-        `Error "${e}" occured. Dumping database to errorDump.js. Use flatted to import and analyze the serialized version.`
+        `Error "${e}" occured. Dumping database to "${options.errorDumpPath}". Use flatted to import and analyze the serialized version.`
       )
       await writeFile(
-        'errorDump.js',
+        options.errorDumpPath,
         stringify({
           forgeCache: ForgeCache.factory('').getErrorInformation(),
           dependencyGraph: DependencyGraph.factory().graph.export(),
