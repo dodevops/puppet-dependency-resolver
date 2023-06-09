@@ -64,6 +64,7 @@ export class ResolveOptions extends Options {
     flag: 'e',
     description: 'Path of file to dump the database into if an error occurs.',
     default: 'errorDump.js',
+    type: String,
   })
   public errorDumpPath = ''
 }
