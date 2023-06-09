@@ -60,3 +60,40 @@ Processing errors can be ignored using the ignore file. Put one module slug (pub
 
 The preamble file can be used to include organization comments in the resulting Puppetfile. The
 preamble is always included after the `forge` declaration.
+
+## Analyzing problems
+
+The dependency resolver dumps its database when problems occur. Because of possible circular references, this database 
+is in a special JSON format, which can be interpreted using [flatted](https://github.com/WebReflection/flatted#flatted).
+
+(The following examples expect, that the required packages are installed as documented in their respective documentation,
+e.g. `npm install flatted` or `npm install graphology`)
+
+```javascript
+const {parse} = require('flatted');
+const database = parse(fs.readFileSync('errorDump.js'))
+```
+
+The database contains two keys:
+
+* forgeCache: the cache of downloaded information from the PuppetForge. It contains available releases and metadata
+  for each required module
+* dependencyGraph: a [Graphology](https://graphology.github.io/) graph containing the dependencies
+
+The dependency graph can be imported to be analyzed by using the import function:
+
+```javascript
+const Graph=require('graphology')
+const analysisGraph=new Graph()
+analysisGraph.import(database.dependencyGraph)
+```
+
+Afterwards, the graph can be analyzed using the documented features. For example, it can be turned into an SVG
+representation like this:
+
+```javascript
+const circular = require('graphology-layout/circular')
+const render = require('graphology-svg')
+circular.assign(analysisGraph, {scale:20})
+render(analysisGraph, './graph.svg', () => console.log('Done!'))
+```
