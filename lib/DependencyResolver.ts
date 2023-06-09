@@ -249,7 +249,7 @@ export class DependencyResolver {
             this._store.hasPuppetfileRequirementWithTargetModule(dependency.targetModule.getSlug()) &&
             !this._ignoreList.some((slug) => slug === dependency.targetModule?.getSlug())
           ) {
-            throw new NoVersionFoundError(`${dependency.targetModule.getSlug()}: ${dependency.dependencyRange}`)
+            throw new NoVersionFoundError(dependency)
           }
         }
       }

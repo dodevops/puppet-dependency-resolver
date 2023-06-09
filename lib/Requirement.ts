@@ -154,7 +154,7 @@ export class Requirement implements Attributes {
         }
       }
       if (!solutionFound) {
-        throw new NoVersionFoundError(requirementDescription)
+        throw new NoVersionFoundError(this)
       }
 
       this._log.debug(`Found valid version. Dropping node from dependency tree and readding it to the requirements`)

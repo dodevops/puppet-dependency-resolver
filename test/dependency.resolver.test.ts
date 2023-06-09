@@ -289,7 +289,7 @@ mod 'test-wrongdepc', '1.2.3'
     )
 
     await expect(subject.resolve()).rejects.toMatchObject({
-      message: 'No possible version for requirement test-wrongdepc: >=1.2.3',
+      message: 'No possible version for requirement test-wrongdepa => test-wrongdepc (>=1.2.3)',
     })
   })
 
