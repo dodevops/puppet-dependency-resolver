@@ -234,10 +234,8 @@ export class DependencyResolver {
               }. Using that`
             )
             dependency.targetModule = existingModule
-          } else if (!this._store.hasPuppetfileRequirementWithTargetModule(dependency.targetModule.getSlug())) {
-            this._log.debug(
-              `Dependency ${dependency.targetModule.getSlug()} is not already a base Puppetfile requirement, adding it.`
-            )
+          } else {
+            this._log.debug(`Adding requirement for dependency to ${dependency.targetModule.getSlug()}`)
             this._store.addRequirement(
               new Requirement()
                 .withSource(RequirementSource.Dependency)
@@ -245,11 +243,6 @@ export class DependencyResolver {
                 .withTargetModule(dependency.targetModule)
                 .withDependencyRange(dependency.dependencyRange)
             )
-          } else if (
-            this._store.hasPuppetfileRequirementWithTargetModule(dependency.targetModule.getSlug()) &&
-            !this._ignoreList.some((slug) => slug === dependency.targetModule?.getSlug())
-          ) {
-            throw new NoVersionFoundError(dependency)
           }
         }
       }

@@ -66,6 +66,12 @@ describe('The dependency resolver', function () {
         ],
       },
     })
+    sb.get('/v3/releases/test-wrongdepc-1.2.2').setResponseBody({
+      slug: 'test-defaultdependency',
+      metadata: {
+        dependencies: [],
+      },
+    })
     sb.get('/v3/releases/test-wrongdepc-1.2.3').setResponseBody({
       slug: 'test-defaultdependency',
       metadata: {
@@ -123,6 +129,9 @@ describe('The dependency resolver', function () {
       releases: [
         {
           version: '1.2.3',
+        },
+        {
+          version: '1.2.2',
         },
       ],
     })
@@ -183,6 +192,25 @@ mod 'test-dependency', '1.2.4'
     expect(subject.dependentModules).toHaveLength(1)
     expect(subject.dependentModules[0].getSlug()).toEqual('test-defaultdependency')
     expect(subject.dependentModules[0].version).toEqual('1.2.5')
+  })
+
+  it('should create a valid puppetfile when a dependency is in the Puppetfile', async () => {
+    const subject = await new DependencyResolver()
+      .withPuppetFile(
+        await new PuppetFile().fromText(`
+forge 'http://localhost:${sb.getPort()}'
+
+mod 'test-default', '1.2.3'
+mod 'test-defaultdependency', '1.2.5'
+    `)
+      )
+      .resolve()
+    expect(subject.modules).toHaveLength(2)
+    expect(subject.modules[0].getSlug()).toEqual('test-default')
+    expect(subject.modules[0].version).toEqual('1.2.3')
+    expect(subject.modules[1].getSlug()).toEqual('test-defaultdependency')
+    expect(subject.modules[1].version).toEqual('1.2.5')
+    expect(subject.dependentModules).toHaveLength(0)
   })
 
   it('should hide items from the puppetfile', async () => {
@@ -284,7 +312,7 @@ mod 'test-deprecated', '1.2.3'
 forge 'http://localhost:${sb.getPort()}'
 
 mod 'test-wrongdepa', '1.2.3'
-mod 'test-wrongdepc', '1.2.3'
+mod 'test-wrongdepc', '1.2.2'
     `)
     )
 
