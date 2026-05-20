@@ -114,13 +114,13 @@ export class Requirement implements Attributes {
    */
   public isValid(): boolean {
     if (this.source === RequirementSource.Dependency && !this.sourceModule) {
-      throw `Requirement has no source module`
+      throw `Requirement has no source module. ${JSON.stringify(this)}`
     }
     if (!this.targetModule) {
-      throw `Requirement has no target module`
+      throw `Requirement has no target module. ${JSON.stringify(this)}`
     }
     if (!this.dependencyRange) {
-      throw `Requirement has no dependency range`
+      throw `Requirement has no dependency range. ${JSON.stringify(this)}`
     }
     return true
   }

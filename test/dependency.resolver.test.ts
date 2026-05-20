@@ -38,6 +38,12 @@ describe('The dependency resolver', function () {
         ],
       },
     })
+    sb.get('/v3/releases/test-defaultdependency-1.2.4').setResponseBody({
+      slug: 'test-defaultdependency',
+      metadata: {
+        dependencies: [],
+      },
+    })
     sb.get('/v3/releases/test-defaultdependency-1.2.5').setResponseBody({
       slug: 'test-defaultdependency',
       metadata: {
@@ -45,7 +51,7 @@ describe('The dependency resolver', function () {
       },
     })
     sb.get('/v3/releases/test-wrongdepa-1.2.3').setResponseBody({
-      slug: 'test-defaultdependency',
+      slug: 'test-wrongdepa',
       metadata: {
         dependencies: [
           {
@@ -56,7 +62,7 @@ describe('The dependency resolver', function () {
       },
     })
     sb.get('/v3/releases/test-wrongdepb-1.2.3').setResponseBody({
-      slug: 'test-defaultdependency',
+      slug: 'test-wrongdepb',
       metadata: {
         dependencies: [
           {
@@ -67,13 +73,13 @@ describe('The dependency resolver', function () {
       },
     })
     sb.get('/v3/releases/test-wrongdepc-1.2.2').setResponseBody({
-      slug: 'test-defaultdependency',
+      slug: 'test-wrongdepc',
       metadata: {
         dependencies: [],
       },
     })
     sb.get('/v3/releases/test-wrongdepc-1.2.3').setResponseBody({
-      slug: 'test-defaultdependency',
+      slug: 'test-wrongdepc',
       metadata: {
         dependencies: [],
       },
@@ -95,6 +101,9 @@ describe('The dependency resolver', function () {
     sb.get('/v3/modules/test-defaultdependency').setResponseBody({
       slug: 'test-defaultdependency',
       releases: [
+        {
+          version: '1.2.4',
+        },
         {
           version: '1.2.5',
         },
@@ -191,7 +200,7 @@ mod 'test-dependency', '1.2.4'
     expect(subject.modules[0].version).toEqual('1.2.3')
     expect(subject.dependentModules).toHaveLength(1)
     expect(subject.dependentModules[0].getSlug()).toEqual('test-defaultdependency')
-    expect(subject.dependentModules[0].version).toEqual('1.2.5')
+    expect(subject.dependentModules[0].version).toEqual('1.2.4')
   })
 
   it('should create a valid puppetfile when a dependency is in the Puppetfile', async () => {
@@ -231,7 +240,7 @@ mod 'test-dependency', '1.2.4'
     expect(subject.modules).toHaveLength(0)
     expect(subject.dependentModules).toHaveLength(1)
     expect(subject.dependentModules[0].getSlug()).toEqual('test-defaultdependency')
-    expect(subject.dependentModules[0].version).toEqual('1.2.5')
+    expect(subject.dependentModules[0].version).toEqual('1.2.4')
   })
 
   it('should throw on invalid dependencies', async () => {
@@ -334,5 +343,20 @@ mod 'test-wrongdepc', '1.2.3'
       .withIgnoreList(['test-wrongdepc'])
 
     await expect(subject.resolve()).resolves.toBeInstanceOf(PuppetFile)
+  })
+
+  it('should not throw when downgrading a module that has the Puppetfile as its source', async () => {
+    await expect(
+      new DependencyResolver()
+        .withPuppetFile(
+          await new PuppetFile().fromText(`
+forge 'http://localhost:${sb.getPort()}'
+
+mod 'test-default', '1.2.3'
+mod 'test-defaultdependency', '1.2.5'
+          `)
+        )
+        .resolve()
+    ).resolves.toBeInstanceOf(PuppetFile)
   })
 })

@@ -269,7 +269,7 @@ export class DependencyResolver {
         const edgeAttributes = graph.graph.getEdgeAttributes(edge)
         this._store?.addRequirement(
           new Requirement()
-            .withSource(RequirementSource.Dependency)
+            .withSource(edgeAttributes[Requirement.PROPERTY_SOURCE])
             .withSourceModule(edgeAttributes[Requirement.PROPERTY_SOURCE_MODULE])
             .withTargetModule(targetModule)
             .withDependencyRange(edgeAttributes[Requirement.PROPERTY_DEPENDENCY_RANGE])
