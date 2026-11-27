@@ -187,7 +187,8 @@ export class PuppetFile {
 # {{{this}}}
 {{/each}}
 mod '{{author}}-{{name}}',
-    :git => '{{git}}'{{#if ref}},
+    :git => '{{git}}'{{#if tag}},
+    :tag => '{{tag}}'{{else if ref}},
     :ref => '{{ref}}'{{/if}}
 {{#unless @last}}
     
@@ -227,6 +228,7 @@ mod '{{author}}-{{name}}', '{{version}}'{{#unless @last}}
             git: value.git,
             comments: value.comments,
             ref: '',
+            tag: value.tag ?? '',
           }
           if (value.ref) {
             retValue['ref'] = value.ref

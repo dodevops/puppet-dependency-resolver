@@ -44,6 +44,11 @@ export class ModuleDeclaration {
   public ref?: string
 
   /**
+   * A git tag (also stored in ref for checkout, kept to render :tag in toText)
+   */
+  public tag?: string
+
+  /**
    * Comments from the Puppetfile
    */
   public comments?: Array<string>
@@ -104,7 +109,7 @@ export class ModuleDeclaration {
       if (':ref' in parameters) {
         this.ref = parameters[':ref']
       } else if (':tag' in parameters) {
-        this.ref = parameters[':tag']
+        this.ref = this.tag = parameters[':tag']
       }
       this.forgeModule = false
       await this.fetchGitMetadata()

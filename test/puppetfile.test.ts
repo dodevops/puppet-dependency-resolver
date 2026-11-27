@@ -186,4 +186,26 @@ mod 'test-dependency', '1.2.4'`
 
     expect(subject.toText()).toEqual(puppetfile)
   })
+
+  it('should keep :tag when generating the puppet file text', async () => {
+    const puppetfile = `forge 'http://localhost:${sb.getPort()}'
+
+# Git modules
+
+mod 'test-git',
+    :git => '${tmpDir.path}',
+    :tag => 'test'
+
+# Forge modules
+
+mod 'test-default', '1.2.3'
+
+## dependencies
+
+mod 'test-dependency', '1.2.4'`
+
+    const subject = await new PuppetFile().fromText(puppetfile)
+
+    expect(subject.toText()).toEqual(puppetfile)
+  })
 })
